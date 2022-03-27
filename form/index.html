@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Golang Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+<div>
+    <div class="container mt-5">
+        <form enctype='multipart/json' action="http://localhost:8080/createmovie" method="post" >
+
+            <div class="container" id="create" style="width:50%">
+
+                <div class="form-group container">
+                    <label>Movie ID</label>
+                    <input type="text" class="form-control" id="movieid" name="movieid"  placeholder="Movie ID">
+                </div>
+
+                <div class="form-group container">
+                    <label>  Movie Name</label>
+                    <input type="text" class="form-control"  id="moviename"  name="moviename"placeholder="Movie Name">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+
+
+    </div>
+</div>
+</body>
+<script>
+    function create(sel) {
+        const dbParam = JSON.stringify({table:sel,limit:20});
+        const xmlhttp = new XMLHttpRequest();
+        xmlhttp.onload = function() {
+            const myObj = JSON.parse(this.responseText);
+            let text = "<table border='1'>"
+            for (let x in myObj) {
+                text += "<tr><td>" + myObj[x].name + "</td></tr>";
+            }
+            text += "</table>"
+            document.getElementById("create").innerHTML = text;
+        }
+        xmlhttp.open("POST", "json_demo_html_table.php");
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send("x=" + dbParam);
+    }
+</script>
+</html>

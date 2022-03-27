@@ -1,0 +1,17 @@
+server:
+  listen_addr: ":8080"
+  timeout:
+    server: 90
+    write: 90
+    read: 90
+    idle: 90
+database:
+  name: cervice
+  user: postgres
+  password: postgres
+smtp:
+  email: cerrahi.info@gmail.com
+  password: MES2rGNyT4NjYt3
+  target: cerrahi.info@gmail.com
+
+password_key: CODONEX_PSOLUTIONS_CERCI

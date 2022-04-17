@@ -51,6 +51,16 @@ func (app *App) Register(writer http.ResponseWriter, req *http.Request) {
 
 }
 
+func (app *App) GetUsers(writer http.ResponseWriter, req *http.Request) {
+	response, errResponse := app.userRepo.GetUsers()
+	if errResponse != nil {
+		app.RenderErrorResponse(writer, errResponse.Status, errResponse.Error, errResponse.Message)
+		return
+	}
+	// render output
+	app.RenderJSON(writer, http.StatusOK, response)
+}
+
 func (app *App) FindUserByID(writer http.ResponseWriter, req *http.Request) {
 	params := mux.Vars(req)
 	id := params["id"]

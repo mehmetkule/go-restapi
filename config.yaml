@@ -6,7 +6,7 @@ server:
     read: 90
     idle: 90
 database:
-  name: cervice
+  name: users
   user: postgres
   password: postgres
 smtp:

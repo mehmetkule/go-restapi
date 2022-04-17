@@ -1,18 +1,18 @@
 package store
 
-
 import (
 	"context"
 	"database/sql"
 	"fmt"
+	"log"
+	"net/http"
+	"time"
+
 	"github.com/gofrs/uuid"
 	"github.com/mehmetkule/go-restapi/internal/dto"
 	"github.com/mehmetkule/go-restapi/logger"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
-	"log"
-	"net/http"
-	"time"
 )
 
 // UserRepo Struct
@@ -46,7 +46,7 @@ func (r *UserRepo) insertCreateUser(request dto.UserRequest) (uuid.UUID, error) 
 
 // FindUserByID fetches user by ID
 func (r *UserRepo) FindUserByID(id uuid.UUID) (*dto.UserResponse, *dto.ErrorResponse) {
-	logger.Logger().Debug("Finding user item",zap.String("email",id.String()))
+	logger.Logger().Debug("Finding user item", zap.String("email", id.String()))
 	sqlQuery := "SELECT id,first_name,last_name,email FROM users WHERE id=$1"
 	var rows *sql.Rows
 	var err error
@@ -73,7 +73,7 @@ func (r *UserRepo) FindUserByID(id uuid.UUID) (*dto.UserResponse, *dto.ErrorResp
 
 // FindUserByEmail fetches user by email
 func (r *UserRepo) FindUserByEmail(email string) (*dto.UserResponse, *dto.ErrorResponse) {
-	logger.Logger().Debug("Finding user item",zap.String("email",email))
+	logger.Logger().Debug("Finding user item", zap.String("email", email))
 	sqlQuery := "SELECT id,first_name,last_name,email,is_2fa FROM users WHERE email=$1"
 	var rows *sql.Rows
 	var err error
@@ -99,7 +99,7 @@ func (r *UserRepo) FindUserByEmail(email string) (*dto.UserResponse, *dto.ErrorR
 
 // GetUser gets user from DB for given email
 func (r *UserRepo) GetUser(email string) (*dto.User, *dto.ErrorResponse) {
-	logger.Logger().Debug("Finding user item",zap.String("email",email))
+	logger.Logger().Debug("Finding user item", zap.String("email", email))
 	sqlQuery := "SELECT email,password FROM users WHERE email=$1"
 	var rows *sql.Rows
 	var err error
@@ -121,6 +121,33 @@ func (r *UserRepo) GetUser(email string) (*dto.User, *dto.ErrorResponse) {
 		return nil, &dto.ErrorResponse{Status: http.StatusInternalServerError, Error: err, Message: "Failed to fetch user"}
 	}
 	return nil, &dto.ErrorResponse{Status: http.StatusNotFound, Error: fmt.Errorf("not found"), Message: "user not found"}
+}
+
+// GetUser gets user from DB for given email
+func (r *UserRepo) GetUsers() ([]dto.UserResponse, *dto.ErrorResponse) {
+	sqlQuery := "SELECT id,first_name,last_name,email,is_2fa FROM users"
+	var rows *sql.Rows
+
+	var err error
+	if rows, err = r.DB.Query(sqlQuery); err != nil {
+		return nil, &dto.ErrorResponse{Status: http.StatusInternalServerError, Error: err, Message: "Failed Get users"}
+	}
+
+	defer rows.Close()
+	var users []dto.UserResponse
+	for rows.Next() {
+		var response dto.UserResponse
+		err = rows.Scan(&response.ID,&response.FirstName, &response.LastName, &response.Email, &response.IsUsing2FA)
+		if err != nil {
+			return nil, &dto.ErrorResponse{Status: http.StatusNotFound, Error: err, Message: "Failed to fetch users"}
+		}
+		users = append(users,response)
+	}
+	
+	if err = rows.Err(); err != nil {
+		return nil, &dto.ErrorResponse{Status: http.StatusInternalServerError, Error: err, Message: "Failed to fetch user"}
+	}
+	return users, nil
 }
 
 func hashAndSalt(pwd []byte) string {

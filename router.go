@@ -18,20 +18,21 @@ func (app *App) AddRoutes() {
 	// User
 	app.AddRoute("POST", "/login", app.Login)
 	app.AddRoute("POST", "/register", app.Register)
-	app.AddRouteWithMiddleware("GET", "/user/{id}", app.FindUserByID, app.JWTHandler)
-	app.AddRouteWithMiddleware("GET", "/user/email/{email}", app.FindUserByEmail, app.JWTHandler)
-	app.AddRouteWithMiddleware("DELETE", "/user/{id}", app.DeleteUser, app.JWTHandler)
+	app.AddRouteWithMiddleware("GET", "/rap/users", app.GetUsers,app.JWTHandler)
+	app.AddRouteWithMiddleware("GET", "/rap/{id}", app.FindUserByID, app.JWTHandler)
+	app.AddRouteWithMiddleware("GET", "/rap/email/{email}", app.FindUserByEmail, app.JWTHandler)
+	app.AddRouteWithMiddleware("DELETE", "/rap/user/{id}", app.DeleteUser, app.JWTHandler)
 	//Relation API
 
 	//Health Check Status
 	app.AddRoute("GET", "/health", app.HealthCheck)
 
 	//File Upload API
-	app.AddRoute("POST", "/file/{parent_id}", app.AddFile)
-	app.AddRouteWithMiddleware("GET", "/file/{id}", app.FindFile, app.JWTHandler)
-	app.AddRouteWithMiddleware("GET", "/files/{parent_id}", app.FindFiles, app.JWTHandler)
-	app.AddRouteWithMiddleware("DELETE", "/file/{id}", app.DeleteFile, app.JWTHandler)
-	app.AddRouteWithMiddleware("DELETE", "/files/{parent_id}", app.DeleteFiles, app.JWTHandler)
+	app.AddRoute("POST", "/rap/file/{parent_id}", app.AddFile)
+	app.AddRouteWithMiddleware("GET", "/rap/file/{id}", app.FindFile, app.JWTHandler)
+	app.AddRouteWithMiddleware("GET", "/rap/files/{parent_id}", app.FindFiles, app.JWTHandler)
+	app.AddRouteWithMiddleware("DELETE", "/rap/file/{id}", app.DeleteFile, app.JWTHandler)
+	app.AddRouteWithMiddleware("DELETE", "/rap/files/{parent_id}", app.DeleteFiles, app.JWTHandler)
 }
 
 //HealthCheck checks application status

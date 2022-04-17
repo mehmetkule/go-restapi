@@ -173,6 +173,8 @@ func (app *App) RenderErrorResponse(writer http.ResponseWriter, httpStatus int, 
 }
 func (app *App) RenderJSON(writer http.ResponseWriter, status int, data interface{}) {
 	writer.Header().Set("Content-Type", "application/json")
+	writer.Header().Set("Access-Control-Allow-Origin", "*")
+	writer.Header().Set("Origin", "*")
 	if data != nil {
 		jsonData, err := json.Marshal(data)
 		if err != nil {

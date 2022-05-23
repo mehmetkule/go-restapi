@@ -1,0 +1,50 @@
+version: '3.4'
+services:
+  app:
+    container_name: user-service
+    build: .
+    ports: 
+      - 8080:8080 
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - db          
+    networks:
+      - learning
+
+
+  db:
+    image: postgres:latest
+    container_name: postgresql-sql
+    environment:
+        POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - learning
+    
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: memo@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: 15357595
+    depends_on:
+      - db 
+    ports:
+      - "5051:80"
+    networks:
+      - learning
+    restart: unless-stopped
+
+volumes:
+  api:
+  database_postgres:  
+
+# Networks to be created to facilitate communication between containers
+networks:
+  learning:
+    driver: bridge
